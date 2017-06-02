@@ -6,7 +6,7 @@
         <div class="col-md-offset-3 col-md-6">
             <div class="form-group">
                 <label for="matricula">Matricula</label>
-                <input type="number" id="matricula" name="matricula" class="form-control" value="${estudiante["matricula"]?string["0"]}" required>
+                <input type="number" readonly id="matricula" name="matricula" class="form-control" value="${estudiante["matricula"]?string["0"]}" required>
             </div>
         </div>
     </div>

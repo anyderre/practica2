@@ -38,9 +38,25 @@ public class Main {
             model.put("title", "Welcome");
             return new ModelAndView(model, "welcome.ftl");
 
-                }, freeMarkerEngine
+                }, freeMarkerEngine);
 
-        );
+        get("/estudiante/:id/delete", (request, response) -> {
+            Map<String, Object> model = new HashMap <String, Object>();
+            int id=0;
+            try{
+                id = Integer.parseInt(request.params("id"));
+            }catch (NumberFormatException ex){
+                ex.printStackTrace();
+            }
+            try{
+                Estudiante.getEstudiantes().remove(Estudiante.getEstudiantes().get(id-1));
+            }catch (Exception ex){
+                ex.printStackTrace();
+            }
+            response.redirect("/");
+            return null;
+        });
+
         get("/estudiante/agregar", (request, response)->{
            Map<String, Object> model = new HashMap<String, Object>();
            model.put("title", "Agregar estudiante");
@@ -70,34 +86,34 @@ public class Main {
                 model.put("nombre", nombre);
                 model.put("apellido", apellido);
                 model.put("info", "registro");
-                return new ModelAndView(model, "successful.ftl");
+                response.redirect("/estdiante/listar");
+                return "";
             }
             else {
-                model.put("error", error);
-                return new ModelAndView(model, "Failed.ftl");
+                response.redirect("/estdiante/listar");
+                return "";
             }
-
-        }, freeMarkerEngine );
+        });
 
         get("/estdiante/listar", (request,response)->{
             Map<String, Object>model = new HashMap<String, Object>();
             model.put("title", "Listar Estudiante");
             int count =1;
-            Map estud = new HashMap();
-            Map<String, Object> lista = new HashMap<String, Object>();
-            for(Estudiante estudiante : Estudiante.getEstudiantes()){
-                estud.put("nombre", estudiante.getNombre());
-                estud.put("apellido", estudiante.getApellido());
-                estud.put("matricula", estudiante.getMatricula());
-                estud.put("telefono", estudiante.getTelefono());
 
-                lista.put(Integer.toString(count), estud);
-                        count++;
-                        estud=new HashMap();
+                Map estud = new HashMap();
+                Map<String, Object> lista = new HashMap<String, Object>();
+
+                for(Estudiante estudiante : Estudiante.getEstudiantes()){
+                    estud.put("nombre", estudiante.getNombre());
+                    estud.put("apellido", estudiante.getApellido());
+                    estud.put("matricula", estudiante.getMatricula());
+                    estud.put("telefono", estudiante.getTelefono());
+
+                    lista.put(Integer.toString(count), estud);
+                            count++;
+                            estud=new HashMap();
            }
-
-            model.put("estudiantes", lista);
-
+                model.put("estudiantes", lista);
             return new ModelAndView(model, "ListarEstudiante.ftl");
         }, freeMarkerEngine );
 
@@ -124,7 +140,6 @@ public class Main {
         model.put("estudiante", est);
         model.put("title", "Modificar Estudiante");
         return new ModelAndView(model, "ModificarEstudiante.ftl");
-
     }, freeMarkerEngine);
 
     post("/estudiante/modificar", ((request, response) -> {
@@ -150,18 +165,16 @@ public class Main {
             Estudiante.getEstudiantes().get(id).setMatricula(matricula);
             Estudiante.getEstudiantes().get(id).setApellido(apellido);
 
-            response.status(201);
-            model.put("nombre", nombre);
-            model.put("apellido", apellido);
-            model.put("info", "modifico");
-            return new ModelAndView(model, "successful.ftl");
+            response.redirect("/estdiante/listar");
+            return "";
         }
         else {
-            model.put("error", error);
-            return new ModelAndView(model, "Failed.ftl");
+            response.redirect("/estdiante/listar");
+           return "";
         }
 
-    }), freeMarkerEngine);
+    }));
+
     }
 
 }
